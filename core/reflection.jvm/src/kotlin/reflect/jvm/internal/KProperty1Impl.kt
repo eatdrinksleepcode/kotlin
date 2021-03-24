@@ -42,6 +42,11 @@ internal open class KProperty1Impl<T, out V> : KProperty1<T, V>, KPropertyImpl<V
 
     class Getter<T, out V>(override val property: KProperty1Impl<T, V>) : KPropertyImpl.Getter<V>(), KProperty1.Getter<T, V> {
         override fun invoke(receiver: T): V = property.get(receiver)
+
+        override fun equals(other: Any?): Boolean =
+            other is Getter<*, *> && property == other.property
+
+        override fun hashCode(): Int = property.hashCode()
     }
 }
 
@@ -60,5 +65,10 @@ internal class KMutableProperty1Impl<T, V> : KProperty1Impl<T, V>, KMutablePrope
 
     class Setter<T, V>(override val property: KMutableProperty1Impl<T, V>) : KPropertyImpl.Setter<V>(), KMutableProperty1.Setter<T, V> {
         override fun invoke(receiver: T, value: V): Unit = property.set(receiver, value)
+
+        override fun equals(other: Any?): Boolean =
+            other is Setter<*, *> && property == other.property
+
+        override fun hashCode(): Int = property.hashCode()
     }
 }
