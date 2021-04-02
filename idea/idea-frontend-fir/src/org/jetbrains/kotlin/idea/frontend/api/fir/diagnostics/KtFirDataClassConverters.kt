@@ -810,6 +810,33 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ITERATOR_AMBIGUITY) { firDiagnostic ->
+        IteratorAmbiguityImpl(
+            firDiagnostic.a.map { abstractFirBasedSymbol ->
+                firSymbolBuilder.buildSymbol(abstractFirBasedSymbol.fir as FirDeclaration)
+            },
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY) { firDiagnostic ->
+        HasNextFunctionAmbiguityImpl(
+            firDiagnostic.a.map { abstractFirBasedSymbol ->
+                firSymbolBuilder.buildSymbol(abstractFirBasedSymbol.fir as FirDeclaration)
+            },
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.NEXT_AMBIGUITY) { firDiagnostic ->
+        NextAmbiguityImpl(
+            firDiagnostic.a.map { abstractFirBasedSymbol ->
+                firSymbolBuilder.buildSymbol(abstractFirBasedSymbol.fir as FirDeclaration)
+            },
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.TYPE_MISMATCH) { firDiagnostic ->
         TypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -1761,6 +1788,24 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.NO_SET_METHOD) { firDiagnostic ->
         NoSetMethodImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.ITERATOR_MISSING) { firDiagnostic ->
+        IteratorMissingImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.HAS_NEXT_MISSING) { firDiagnostic ->
+        HasNextMissingImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.NEXT_MISSING) { firDiagnostic ->
+        NextMissingImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
