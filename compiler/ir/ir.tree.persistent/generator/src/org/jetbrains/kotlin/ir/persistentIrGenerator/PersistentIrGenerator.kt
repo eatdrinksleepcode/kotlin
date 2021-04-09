@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 import java.io.File
-import java.lang.IllegalStateException
-import java.lang.StringBuilder
 
 internal interface R {
     fun text(t: String): R
@@ -308,7 +306,7 @@ internal object PersistentIrGenerator {
         allProto.forEach { p ->
             if (p.entityName !in seenEntities) {
                 seenEntities += p.entityName
-                list += +"abstract fun deserialize${p.entityName.capitalize()}(proto: " + p.protoType + "): " + p.irType
+                list += +"abstract fun deserialize${p.entityName.replaceFirstChar(Char::uppercaseChar)}(proto: ${p.protoType}): ${p.irType}"
             }
         }
     }
@@ -332,13 +330,14 @@ internal object PersistentIrGenerator {
                         if (f.proto == null) {
                             +"null"
                         } else {
-                            val deserialize = "deserialize${f.proto.entityName.capitalize()}"
+                            val deserialize = "deserialize${f.proto.entityName.replaceFirstChar(Char::uppercaseChar)}"
 
                             when {
                                 f.proto.fieldKind == FieldKind.REPEATED ->
                                     +"proto.${f.name}List.map { $deserialize(it) }"
                                 f.proto.protoPrefix != null && f.proto.fieldKind == FieldKind.OPTIONAL ->
-                                    +"if (proto.has${f.name.capitalize()}()) $deserialize(proto.${f.name}) else null"
+                                    +"if (proto.has${f.name.replaceFirstChar(Char::uppercaseChar)}()) $deserialize(proto.${f.name}) " +
+                                            "else null"
                                 f.proto.protoPrefix == null ->
                                     +"$deserialize(proto.flags)"
                                 else ->
@@ -364,7 +363,7 @@ internal object PersistentIrGenerator {
         allProto.forEach { p ->
             if (p.entityName !in seenEntities) {
                 seenEntities += p.entityName
-                list += +"abstract fun serialize${p.entityName.capitalize()}(value: " + p.irType + "): " + p.protoType
+                list += +"abstract fun serialize${p.entityName.replaceFirstChar(Char::uppercaseChar)}(value: ${p.irType}): ${p.protoType}"
             }
         }
     }
@@ -387,8 +386,9 @@ internal object PersistentIrGenerator {
                 *(fields.mapNotNull { f ->
                     f.proto?.let { p ->
                         if (p.protoPrefix != null) {
-                            val action = "proto." + (if (p.fieldKind == FieldKind.REPEATED) "addAll" else "set") + f.name.capitalize()
-                            val serializationFun = "serialize${f.proto.entityName.capitalize()}"
+                            val action = "proto." + (if (p.fieldKind == FieldKind.REPEATED) "addAll" else "set") +
+                                    f.name.replaceFirstChar(Char::uppercaseChar)
+                            val serializationFun = "serialize${f.proto.entityName.replaceFirstChar(Char::uppercaseChar)}"
                             val argument = "carrier.${f.name}${if (f.propSymbolType != null) "Symbol" else ""}Field"
 
                             when {
@@ -405,7 +405,9 @@ internal object PersistentIrGenerator {
                                 flagsHandled = true
                                 val flags = fields.filter { it.proto?.protoPrefix == null }
 
-                                val calls = flags.map { f -> "serialize${f.proto!!.entityName.capitalize()}(carrier.${f.name}Field)" }
+                                val calls = flags.map { f ->
+                                    "serialize${f.proto!!.entityName.replaceFirstChar(Char::uppercaseChar)}(carrier.${f.name}Field)"
+                                }
 
                                 +"proto.setFlags(${calls.joinToString(separator = " or ")})"
                             } else null
