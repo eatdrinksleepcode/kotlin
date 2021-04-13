@@ -222,6 +222,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<ConeKotlinType>("actualType")
         }
 
+        val NULL_FOR_NONNULL_TYPE by error<FirSourceElement, PsiElement> { }
+
         val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }

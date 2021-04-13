@@ -41,7 +41,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = setOf(
-        FirValReassignmentViaBackingFieldChecker
+        FirValReassignmentViaBackingFieldChecker,
+        FirAssignmentTypeMismatchChecker
     )
 
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker> = setOf(
