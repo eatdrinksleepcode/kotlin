@@ -62,7 +62,7 @@ val BaseKotlinLibrary.shortName: String?
 
 val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
-        .map { UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it")) }
+        .map { ManifestUnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it")) }
 
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
 

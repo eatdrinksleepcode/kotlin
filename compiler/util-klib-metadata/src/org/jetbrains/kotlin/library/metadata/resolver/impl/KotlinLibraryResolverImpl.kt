@@ -56,7 +56,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
     ): List<KotlinLibrary> {
 
         val userProvidedLibraries = unresolvedLibraries.asSequence()
-                .map { searchPathResolver.resolve(it) }
+                .mapNotNull { searchPathResolver.resolve(it) }
                 .toList()
 
         val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs, noEndorsedLibs)
@@ -118,7 +118,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
                 library.library.unresolvedDependencies.asSequence()
 
                         .filterNot { searchPathResolver.isProvidedByDefault(it) }
-                        .map { KotlinResolvedLibraryImpl(searchPathResolver.resolve(it)) }
+                        .mapNotNull { KotlinResolvedLibraryImpl(searchPathResolver.resolve(it) ?: return@mapNotNull null) }
                         .map { resolved ->
                             val absoluteFile = resolved.library.libraryFile.absoluteFile
                             if (absoluteFile in cache) {

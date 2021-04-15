@@ -1,10 +1,30 @@
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.library
 
-data class UnresolvedLibrary(
-    val path: String,
-    val libraryVersion: String?) {
+fun UnresolvedLibrary(path: String, libraryVersion: String?): ExplicitUnresolvedLibrary =
+    ExplicitUnresolvedLibrary(path, libraryVersion)
 
-    fun substitutePath(newPath: String): UnresolvedLibrary {
-        return UnresolvedLibrary(newPath, libraryVersion)
+sealed class UnresolvedLibrary {
+    abstract val path: String
+    abstract val libraryVersion: String?
+    abstract fun substitutePath(newPath: String): UnresolvedLibrary
+}
+
+data class ExplicitUnresolvedLibrary(
+    override val path: String,
+    override val libraryVersion: String?
+) : UnresolvedLibrary() {
+    override fun substitutePath(newPath: String): ExplicitUnresolvedLibrary {
+        return copy(path = newPath)
+    }
+}
+
+data class ManifestUnresolvedLibrary(
+    override val path: String,
+    override val libraryVersion: String?
+) : UnresolvedLibrary() {
+    override fun substitutePath(newPath: String): ManifestUnresolvedLibrary {
+        return copy(path = newPath)
     }
 }
