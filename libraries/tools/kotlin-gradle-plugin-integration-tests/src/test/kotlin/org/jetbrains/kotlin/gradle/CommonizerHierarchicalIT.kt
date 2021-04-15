@@ -86,6 +86,18 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test commonizeHierarchicallyMultiModule`() {
+        with(Project("commonizeHierarchicallyMultiModule")) {
+            build("assemble") {
+                assertSuccessful()
+                assertTasksExecuted(":p1:commonize", ":p1:commonizeCInterop")
+                assertTasksExecuted(":p2:commonize", ":p2:commonizeCInterop")
+                assertTasksExecuted(":p3:commonize", ":p3:commonizeCInterop")
+            }
+        }
+    }
+
     private object Os {
         private val os = OperatingSystem.current()
         val canCompileApple get() = os.isMacOsX
