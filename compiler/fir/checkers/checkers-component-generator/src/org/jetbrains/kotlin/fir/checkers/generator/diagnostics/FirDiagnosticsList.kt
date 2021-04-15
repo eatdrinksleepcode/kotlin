@@ -619,6 +619,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<String>("operator")
             parameter<FirExpression>("rhs")
         }
+        val ITERATOR_ON_NULLABLE by error<FirSourceElement, KtExpression>()
         val UNNECESSARY_SAFE_CALL by warning<FirSourceElement, PsiElement>(PositioningStrategy.SAFE_ACCESS) {
             parameter<ConeKotlinType>("receiverType")
         }
@@ -658,6 +659,12 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ITERATOR_MISSING by error<FirSourceElement, KtExpression>()
         val HAS_NEXT_MISSING by error<FirSourceElement, KtExpression>()
         val NEXT_MISSING by error<FirSourceElement, KtExpression>()
+        val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
+        val NEXT_NONE_APPLICABLE by error<FirSourceElement, KtExpression> {
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {

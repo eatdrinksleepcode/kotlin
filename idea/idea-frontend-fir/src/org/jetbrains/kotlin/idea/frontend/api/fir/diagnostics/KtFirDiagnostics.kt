@@ -1214,6 +1214,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val rhs: KtExpression
     }
 
+    abstract class IteratorOnNullable : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = IteratorOnNullable::class
+    }
+
     abstract class UnnecessarySafeCall : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = UnnecessarySafeCall::class
         abstract val receiverType: KtType
@@ -1278,6 +1282,16 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class NextMissing : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = NextMissing::class
+    }
+
+    abstract class HasNextFunctionNoneApplicable : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = HasNextFunctionNoneApplicable::class
+        abstract val candidates: List<KtSymbol>
+    }
+
+    abstract class NextNoneApplicable : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = NextNoneApplicable::class
+        abstract val candidates: List<KtSymbol>
     }
 
     abstract class ToplevelTypealiasesOnly : KtFirDiagnostic<KtTypeAlias>() {

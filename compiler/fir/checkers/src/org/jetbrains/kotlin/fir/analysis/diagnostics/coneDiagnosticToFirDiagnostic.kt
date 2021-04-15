@@ -19,10 +19,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
-import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
-import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private fun ConeDiagnostic.toFirDiagnostic(
@@ -31,34 +27,13 @@ private fun ConeDiagnostic.toFirDiagnostic(
 ): FirDiagnostic<FirSourceElement>? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name?.asString() ?: "<No name>")
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.classId.asString())
-    is ConeUnresolvedNameError -> if (source.kind == FirFakeSourceElementKind.DesugaredForLoop) {
-        when (this.name) {
-            ITERATOR -> FirErrors.ITERATOR_MISSING.on(source)
-            HAS_NEXT -> FirErrors.HAS_NEXT_MISSING.on(source)
-            NEXT -> FirErrors.NEXT_MISSING.on(source)
-            else -> null
-        }
-    } else {
-        FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
-    }
+    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
     is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.qualifier)
     is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, this.candidateSymbol)
     is ConeAmbiguityError -> if (!this.applicability.isSuccess) {
         FirErrors.NONE_APPLICABLE.on(source, this.candidates)
     } else {
-        when (source.kind) {
-            FirFakeSourceElementKind.DesugaredForLoop -> {
-                when (this.name) {
-                    ITERATOR -> FirErrors.ITERATOR_AMBIGUITY.on(source, this.candidates)
-                    HAS_NEXT -> FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY.on(source, this.candidates)
-                    NEXT -> FirErrors.NEXT_AMBIGUITY.on(source, this.candidates)
-                    else -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.on(source, this.candidates)
-                }
-            }
-            else -> {
-                FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.on(source, this.candidates)
-            }
-        }
+        FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.on(source, this.candidates)
     }
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)

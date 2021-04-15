@@ -1,7 +1,7 @@
 
 fun foo1() = <!EXPRESSION_EXPECTED!>while (b()) {}<!>
 
-fun foo2() = <!ITERATOR_MISSING!>for (i in 10) {}<!>
+fun foo2() = for (i in <!ITERATOR_MISSING!>10<!>) {}
 
 fun foo3() = when (b()) {
     true -> 1

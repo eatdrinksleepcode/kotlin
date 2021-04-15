@@ -11,6 +11,6 @@ fun test(nothing: Nothing?) {
 }
 
 fun sum(a : IntArray) : Int {
-<!ITERATOR_MISSING!>for (n
-<!SYNTAX!>return<!><!SYNTAX!><!> "?"<!>
+for (n
+<!SYNTAX!>return<!><!SYNTAX!><!> "?"
 }

@@ -4,6 +4,6 @@ class X
 operator fun <T> X.iterator(): Iterable<T> = TODO()
 
 fun test() {
-    <!HAS_NEXT_MISSING!>for (i in X()) {
-    }<!>
+    for (i in <!HAS_NEXT_MISSING!>X()<!>) {
+    }
 }

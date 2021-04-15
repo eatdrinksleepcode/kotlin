@@ -90,7 +90,8 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
             return
         }
-        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor) {
+        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor || source.kind == FirFakeSourceElementKind.DesugaredForLoop) {
+            // See FirForLoopChecker
             return
         }
         for (coneDiagnostic in diagnostic.toFirDiagnostics(source, qualifiedAccessSource)) {
