@@ -1,5 +1,5 @@
 
-fun foo1() = <!EXPRESSION_REQUIRED!>while (b()) {}<!>
+fun foo1() = <!EXPRESSION_EXPECTED!>while (b()) {}<!>
 
 fun foo2() = <!ITERATOR_MISSING!>for (i in 10) {}<!>
 
