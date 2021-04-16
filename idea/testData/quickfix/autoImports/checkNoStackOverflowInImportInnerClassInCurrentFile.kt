@@ -1,4 +1,4 @@
-// "class org.jetbrains.kotlin.idea.quickfix.ImportFix" "false"
+// "Import" "false"
 
 // KT-3165 Weird stack overflow in IDE
 // ERROR: Unresolved reference: Bar
