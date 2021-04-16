@@ -12,3 +12,4 @@ fun test(a: Any) {
         a.<caret>foo()
     }
 }
+/* FIR_COMPARISON */

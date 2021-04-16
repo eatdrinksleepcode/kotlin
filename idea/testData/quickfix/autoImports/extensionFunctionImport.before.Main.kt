@@ -6,3 +6,5 @@ fun some() {
     val str = ""
     str.<caret>someFun()
 }
+
+/* FIR_COMPARISON */

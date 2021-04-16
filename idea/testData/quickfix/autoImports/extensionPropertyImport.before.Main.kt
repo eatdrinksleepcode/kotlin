@@ -5,3 +5,5 @@ package test
 fun some() {
     "".<caret>someVal
 }
+
+/* FIR_COMPARISON */

@@ -8,3 +8,5 @@ fun some() {
     val str = ""
     str.someFun()
 }
+
+/* FIR_COMPARISON */

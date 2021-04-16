@@ -6,3 +6,4 @@ import dep.TTA
 fun use(taa: TTA) {
     taa.ext<caret>()
 }
+/* FIR_COMPARISON */

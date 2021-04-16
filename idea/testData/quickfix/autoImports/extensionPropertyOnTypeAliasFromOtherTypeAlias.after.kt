@@ -8,3 +8,4 @@ fun use() {
     val ta = TA1()
     ta.ext<caret>
 }
+/* FIR_COMPARISON */
