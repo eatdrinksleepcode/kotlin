@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -60,7 +59,7 @@ class ExpressionsConverter(
         return expression?.let {
             convertExpression(it, errorReason)
         } as? R ?: buildErrorExpression(
-            null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired)
+            expression?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired)
         ) as R
     }
 
@@ -946,21 +945,28 @@ class ExpressionsConverter(
             }
         }
 
+        val forFakeSource = forLoop.toFirSourceElement(FirFakeSourceElementKind.DesugaredForLoop)
         val target: FirLoopTarget
         return buildBlock {
-            source = forLoop.toFirSourceElement()
+            source = forFakeSource
             val iteratorVal = generateTemporaryVariable(
                 this@ExpressionsConverter.baseSession, null, Name.special("<iterator>"),
                 buildFunctionCall {
-                    calleeReference = buildSimpleNamedReference { name = Name.identifier("iterator") }
+                    calleeReference = buildSimpleNamedReference {
+                        name = Name.identifier("iterator")
+                        source = forFakeSource
+                    }
                     explicitReceiver = rangeExpression
                 }
             )
             statements += iteratorVal
             statements += FirWhileLoopBuilder().apply {
-                source = forLoop.toFirSourceElement()
+                source = forFakeSource
                 condition = buildFunctionCall {
-                    calleeReference = buildSimpleNamedReference { name = Name.identifier("hasNext") }
+                    calleeReference = buildSimpleNamedReference {
+                        name = Name.identifier("hasNext")
+                        source = forFakeSource
+                    }
                     explicitReceiver = generateResolvedAccessExpression(null, iteratorVal)
                 }
                 // break/continue in the for loop condition will refer to an outer loop if any.
@@ -977,7 +983,10 @@ class ExpressionsConverter(
                         this@ExpressionsConverter.baseSession, null,
                         if (multiDeclaration != null) Name.special("<destruct>") else parameter!!.firValueParameter.name,
                         buildFunctionCall {
-                            calleeReference = buildSimpleNamedReference { name = Name.identifier("next") }
+                            calleeReference = buildSimpleNamedReference {
+                                name = Name.identifier("next")
+                                source = forFakeSource
+                            }
                             explicitReceiver = generateResolvedAccessExpression(null, iteratorVal)
                         },
                         parameter!!.firValueParameter.returnTypeRef
