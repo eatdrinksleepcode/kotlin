@@ -235,9 +235,7 @@ task compileJs(type: NoDebugJavaExec) {
         def sourceMapSourcesBaseDirs = ["$projectDir/$jsSrcDir", jsCommonSrcDir, "$projectDir/$jsSrcJsDir", builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir,  unsignedCommonSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
-            def text = sourceMapSourcesBaseDirs.collect { new File("$it/$sourceName") }.find { it.exists() }?.text
-            if (text == null) logger.warn("Sources missing for file $sourceName")
-            text
+            sourceMapSourcesBaseDirs.collect { new File("$it/$sourceName") }.find { it.exists() }?.text
         }
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
