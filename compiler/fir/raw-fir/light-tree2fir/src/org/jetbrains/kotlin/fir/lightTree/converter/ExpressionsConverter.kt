@@ -260,7 +260,7 @@ class ExpressionsConverter(
             buildFunctionCall {
                 source = binaryExpression.toFirSourceElement()
                 calleeReference = buildSimpleNamedReference {
-                    source = this@buildFunctionCall.source
+                    source = operationReferenceSource ?: this@buildFunctionCall.source
                     name = conventionCallName ?: operationTokenName.nameAsSafeName()
                 }
                 explicitReceiver = leftArgAsFir
@@ -954,7 +954,9 @@ class ExpressionsConverter(
         return buildBlock {
             source = forFakeSource
             val iteratorVal = generateTemporaryVariable(
-                this@ExpressionsConverter.baseSession, null, Name.special("<iterator>"),
+                this@ExpressionsConverter.baseSession,
+                rangeExpression.source,
+                Name.special("<iterator>"),
                 buildFunctionCall {
                     calleeReference = buildSimpleNamedReference {
                         name = Name.identifier("iterator")
@@ -981,19 +983,21 @@ class ExpressionsConverter(
                 buildBlock block@{
                     source = blockNode?.toFirSourceElement()
                     statements += convertLoopBody(blockNode).statements
-                    if (parameter == null) return@block
-                    val multiDeclaration = parameter!!.destructuringDeclaration
+                    val valueParameter = parameter ?: return@block
+                    val multiDeclaration = valueParameter.destructuringDeclaration
                     val firLoopParameter = generateTemporaryVariable(
-                        this@ExpressionsConverter.baseSession, null,
-                        if (multiDeclaration != null) Name.special("<destruct>") else parameter!!.firValueParameter.name,
+                        this@ExpressionsConverter.baseSession,
+                        valueParameter.firValueParameter.source,
+                        if (multiDeclaration != null) Name.special("<destruct>") else valueParameter.firValueParameter.name,
                         buildFunctionCall {
+                            source = forFakeSource
                             calleeReference = buildSimpleNamedReference {
                                 name = Name.identifier("next")
                                 source = forFakeSource
                             }
                             explicitReceiver = generateResolvedAccessExpression(null, iteratorVal)
                         },
-                        parameter!!.firValueParameter.returnTypeRef
+                        valueParameter.firValueParameter.returnTypeRef
                     )
                     if (multiDeclaration != null) {
                         val destructuringBlock = generateDestructuringBlock(
