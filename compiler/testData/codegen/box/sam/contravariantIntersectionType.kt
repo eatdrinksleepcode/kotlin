@@ -1,8 +1,10 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
+// TARGET_BACKEND: JVM
 
 // CHECK_BYTECODE_TEXT
-// 0 java/lang/invoke/LambdaMetafactory
+// JVM_IR_TEMPLATES
+// 2 java/lang/invoke/LambdaMetafactory
+
+// FILE: test.kt
 
 abstract class BaseClass
 interface BaseInterface
@@ -33,6 +35,8 @@ class GenericHolder<T> {
     }
 }
 
-fun interface Consumer<T> {
-    fun accept(t: T)
+// FILE: Consumer.java
+
+public interface Consumer<T> {
+    void accept(T t);
 }

@@ -1,11 +1,17 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: SAM_CONVERSIONS
+// TARGET_BACKEND: JVM
 
 // CHECK_BYTECODE_TEXT
-// 0 java/lang/invoke/LambdaMetafactory
+// JVM_IR_TEMPLATES
+// 2 java/lang/invoke/LambdaMetafactory
 
-abstract class BaseClass
-interface BaseInterface
+// FILE: test.kt
+
+interface Top
+
+interface Common : Top
+
+abstract class BaseClass : Common
+interface BaseInterface : Common
 
 class ConcreteType : BaseClass(), BaseInterface
 class ConcreteType2 : BaseClass(), BaseInterface
@@ -27,12 +33,14 @@ fun example(input: Int) {
 
 fun functionReference(x: Any) {}
 
-class GenericHolder<T> {
+class GenericHolder<T : Top> {
     fun doOnSuccess(onSuccess: Consumer<in T>) {
         onSuccess.accept(object : BaseClass() {} as T)
     }
 }
 
-fun interface Consumer<T> {
-    fun accept(t: T)
+// FILE: Consumer.java
+
+public interface Consumer<T extends Top> {
+    void accept(T t);
 }
